@@ -1,4 +1,10 @@
-use axum::{response::Html, routing::get, Router};
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Json},
+    routing::get,
+    Router,
+};
+use serde_json::json;
 
 #[tokio::main]
 async fn main() {
@@ -9,6 +15,6 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn handler() -> Html<&'static str> {
-    Html("Hello, world!")
+async fn handler() -> impl IntoResponse {
+    (StatusCode::OK, Json(json!("OK")))
 }
