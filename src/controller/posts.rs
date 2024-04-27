@@ -10,7 +10,8 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Deserialize)]
 pub struct CreatePostsRequest {
-    pub post_id: String,
+    pub caption: String,
+    pub image_url: String,
 }
 
 #[derive(Serialize)]
@@ -41,9 +42,16 @@ pub async fn get_posts(Extension(conn): Extension<Arc<Mutex<Connection>>>) -> im
     (StatusCode::OK, Json(json!(posts)))
 }
 
-pub async fn create_posts(Json(_payload): Json<CreatePostsRequest>) -> impl IntoResponse {
-    (
-        StatusCode::OK,
-        Json(json!({"caption": "うちのいぬ", "image_url": "https://via.placeholder.com/500x200"})),
+pub async fn create_posts(
+    Extension(conn): Extension<Arc<Mutex<Connection>>>,
+    Json(payload): Json<CreatePostsRequest>,
+) -> impl IntoResponse {
+    let conn = conn.lock().unwrap();
+    conn.execute(
+        "INSERT INTO posts(caption, image_url) values (?1, ?2)",
+        (&payload.caption, &payload.image_url),
     )
+    .unwrap();
+
+    StatusCode::CREATED
 }
