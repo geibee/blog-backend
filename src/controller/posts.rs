@@ -19,12 +19,14 @@ struct Post {
     id: String,
     caption: String,
     image_url: String,
+    created_at: String,
+    updated_at: String,
 }
 
 pub async fn get_posts(Extension(conn): Extension<Arc<Mutex<Connection>>>) -> impl IntoResponse {
     let conn = conn.lock().unwrap();
     let mut stmt = conn
-        .prepare("SELECT id, caption, image_url from posts")
+        .prepare("SELECT id, caption, image_url, created_at, updated_at from posts")
         .unwrap();
 
     let posts = stmt
@@ -33,6 +35,8 @@ pub async fn get_posts(Extension(conn): Extension<Arc<Mutex<Connection>>>) -> im
                 id: row.get(0)?,
                 caption: row.get(1)?,
                 image_url: row.get(2)?,
+                created_at: row.get(3)?,
+                updated_at: row.get(4)?,
             })
         })
         .unwrap()
