@@ -6,6 +6,7 @@ use axum::{
     routing::get,
     Extension, Router,
 };
+use dotenvy::dotenv;
 use rusqlite::Connection;
 use serde_json::json;
 use std::sync::{Arc, Mutex};
@@ -15,6 +16,7 @@ use tower_http::cors::{Any, CorsLayer};
 async fn main() {
     let dbfile = "./blog.sqlite";
     let conn = Connection::open(dbfile).unwrap();
+    dotenv().expect(".env not found");
 
     let app = Router::new()
         .route("/", get(handler))
@@ -22,6 +24,7 @@ async fn main() {
             "/posts",
             get(controller::posts::get_posts).post(controller::posts::create_posts),
         )
+        .route("/s3api", get(controller::s3api::get_uploader))
         .layer(
             CorsLayer::new()
                 .allow_origin("http://localhost:4000".parse::<HeaderValue>().unwrap())
