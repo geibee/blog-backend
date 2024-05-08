@@ -4,6 +4,7 @@ use axum::{
     http::{header::CONTENT_TYPE, HeaderValue, StatusCode},
     response::{IntoResponse, Json},
     routing::get,
+    routing::post,
     Extension, Router,
 };
 use dotenvy::dotenv;
@@ -24,7 +25,7 @@ async fn main() {
             "/posts",
             get(controller::posts::get_posts).post(controller::posts::create_posts),
         )
-        .route("/s3api", get(controller::s3api::get_uploader))
+        .route("/s3api", post(controller::s3api::generate_uploader))
         .layer(
             CorsLayer::new()
                 .allow_origin("http://localhost:4000".parse::<HeaderValue>().unwrap())

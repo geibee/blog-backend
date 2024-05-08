@@ -42,7 +42,7 @@ async fn put_object(
     Ok(presigned_request.uri().to_string())
 }
 
-pub async fn get_uploader(Json(payload): Json<MediaFile>) -> impl IntoResponse {
+pub async fn generate_uploader(Json(payload): Json<MediaFile>) -> impl IntoResponse {
     let shared_config = aws_config::from_env()
         .region(Region::new("ap-northeast-1"))
         .load()
