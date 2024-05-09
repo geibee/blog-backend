@@ -37,8 +37,6 @@ async fn put_object(
         .presigned(PresigningConfig::expires_in(expires_in)?)
         .await?;
 
-    println!("Object URI: {}", presigned_request.uri());
-
     Ok(presigned_request.uri().to_string())
 }
 
