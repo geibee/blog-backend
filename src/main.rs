@@ -4,7 +4,6 @@ use axum::{
     http::{header::CONTENT_TYPE, HeaderValue, StatusCode},
     response::{IntoResponse, Json},
     routing::get,
-    routing::post,
     Extension, Router,
 };
 use dotenvy::dotenv;
@@ -19,13 +18,15 @@ async fn main() {
     let conn = Connection::open(dbfile).unwrap();
     dotenv().expect(".env not found");
 
-    let app = Router::new()
-        .route("/", get(handler))
+    let route = Router::new().route("/", get(handler)).route(
+        "/posts",
+        get(controller::posts::get_posts).post(controller::posts::create_posts),
+    );
+    let app = route
         .route(
-            "/posts",
-            get(controller::posts::get_posts).post(controller::posts::create_posts),
+            "/s3api",
+            get(controller::s3api::get_viewer).post(controller::s3api::generate_uploader),
         )
-        .route("/s3api", post(controller::s3api::generate_uploader))
         .layer(
             CorsLayer::new()
                 .allow_origin("http://localhost:4000".parse::<HeaderValue>().unwrap())
