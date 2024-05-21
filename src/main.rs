@@ -6,7 +6,6 @@ use axum::{
     routing::get,
     Extension, Router,
 };
-use dotenvy::dotenv;
 use rusqlite::Connection;
 use serde_json::json;
 use std::sync::{Arc, Mutex};
@@ -14,9 +13,8 @@ use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
-    let dbfile = "./blog.sqlite";
+    let dbfile = "/mnt/efs/db/blog.sqlite";
     let conn = Connection::open(dbfile).unwrap();
-    dotenv().expect(".env not found");
 
     let route = Router::new().route("/", get(handler)).route(
         "/posts",
