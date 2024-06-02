@@ -21,7 +21,7 @@ pub struct CreatePostsRequest {
 
 #[derive(Serialize, Clone)]
 struct Post {
-    id: String,
+    id: u64,
     caption: String,
     image_url: String,
     created_at: String,
